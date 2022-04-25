@@ -14,18 +14,32 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoryController = void 0;
 const common_1 = require("@nestjs/common");
+const category_dto_1 = require("./dto/category.dto");
 const category_service_1 = require("./category.service");
+const create_category_dto_1 = require("./dto/create-category.dto");
 let CategoryController = class CategoryController {
     constructor(categoryService) {
         this.categoryService = categoryService;
     }
     async findAll() {
-        const tasks = await this.categoryService.findAll();
-        return tasks;
+        const res = await this.categoryService.findAll();
+        return res;
     }
-    findOne(id) {
-        console.log(id);
-        return `This action returns a #${id} task`;
+    async findOne(id) {
+        const res = await this.categoryService.findOne(id);
+        return res;
+    }
+    async create(createCategoryDto) {
+        const res = this.categoryService.create(createCategoryDto);
+        return res;
+    }
+    async update(categoryDto) {
+        const res = await this.categoryService.update(categoryDto);
+        return res;
+    }
+    async delete(id) {
+        const res = await this.categoryService.delete(id);
+        return res;
     }
 };
 __decorate([
@@ -35,12 +49,35 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], CategoryController.prototype, "findAll", null);
 __decorate([
-    (0, common_1.Get)(':id/get'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Get)('category/:id'),
+    __param(0, (0, common_1.Param)('id', new common_1.ParseIntPipe())),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", String)
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
 ], CategoryController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Post)('create'),
+    (0, common_1.Header)('Content-Type', 'application/json'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_category_dto_1.CreateCategoryDto]),
+    __metadata("design:returntype", Promise)
+], CategoryController.prototype, "create", null);
+__decorate([
+    (0, common_1.Patch)('update'),
+    (0, common_1.Header)('Content-Type', 'application/json'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [category_dto_1.CategoryDto]),
+    __metadata("design:returntype", Promise)
+], CategoryController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)('delete/:id'),
+    __param(0, (0, common_1.Param)('id', new common_1.ParseIntPipe())),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], CategoryController.prototype, "delete", null);
 CategoryController = __decorate([
     (0, common_1.Controller)('categories'),
     __metadata("design:paramtypes", [category_service_1.CategoryService])

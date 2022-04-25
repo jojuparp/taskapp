@@ -20,6 +20,7 @@ const db_service_1 = require("./db/db.service");
 const task_module_1 = require("./task/task.module");
 let AppModule = class AppModule {
     async onModuleInit() {
+        await this.databaseService.initClient();
         await this.databaseService.createPool();
     }
     async onModuleDestroy() {

@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetTaskDto = void 0;
+const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
 class GetTaskDto {
     constructor(id, description, dueDate, categoryId) {
@@ -28,6 +29,7 @@ __decorate([
     __metadata("design:type", String)
 ], GetTaskDto.prototype, "description", void 0);
 __decorate([
+    (0, class_transformer_1.Type)(() => Date),
     (0, class_validator_1.IsDate)(),
     __metadata("design:type", Date)
 ], GetTaskDto.prototype, "dueDate", void 0);

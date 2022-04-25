@@ -17,6 +17,7 @@ CategoryModule = __decorate([
     (0, common_1.Module)({
         controllers: [category_controller_1.CategoryController],
         providers: [category_service_1.CategoryService, category_repository_1.CategoryRepository],
+        exports: [category_service_1.CategoryService]
     })
 ], CategoryModule);
 exports.CategoryModule = CategoryModule;

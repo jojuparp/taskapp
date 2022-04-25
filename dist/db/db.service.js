@@ -11,6 +11,16 @@ const common_1 = require("@nestjs/common");
 const OracleDB = require("oracledb");
 const db_config_1 = require("./db.config");
 let DatabaseService = class DatabaseService {
+    async initClient() {
+        const libDirPath = process.env.LIB_DIR_PATH || '/Users/joni1/devel/instantclient';
+        console.log(`initalizing Instantclient with path ${libDirPath}`);
+        try {
+            return OracleDB.initOracleClient({ libDir: libDirPath });
+        }
+        catch (err) {
+            console.error("error initializing client: ", err);
+        }
+    }
     async createPool() {
         console.log('creating database connection pool...');
         try {
@@ -19,14 +29,14 @@ let DatabaseService = class DatabaseService {
             return pool;
         }
         catch (error) {
-            console.log('error creating connection pool ', error);
+            console.log('error creating connection pool: ', error);
         }
     }
     async closePool() {
-        console.log('terminating database connection pool');
+        console.log('terminating database connection pool...');
         try {
             console.log('database pool closed');
-            OracleDB.getPool().close(10);
+            return OracleDB.getPool().close(10);
         }
         catch (error) {
             console.log(error);
@@ -41,7 +51,7 @@ let DatabaseService = class DatabaseService {
             console.log(error);
         }
     }
-    async executeQuery(connection, sql, bindParams, options) {
+    async executeQuery(connection, sql, bindParams = {}, options = { autoCommit: true, outFormat: OracleDB.OUT_FORMAT_OBJECT }) {
         try {
             const result = await connection.execute(sql, bindParams, options);
             return result;

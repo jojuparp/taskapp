@@ -17,6 +17,7 @@ TaskModule = __decorate([
     (0, common_1.Module)({
         controllers: [task_controller_1.TaskController],
         providers: [task_service_1.TaskService, task_repository_1.TaskRepository],
+        exports: [task_service_1.TaskService]
     })
 ], TaskModule);
 exports.TaskModule = TaskModule;

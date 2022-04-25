@@ -20,9 +20,31 @@ let TaskService = class TaskService {
         const res = await this.taskRepository.findAll();
         return res;
     }
+    async findById(id) {
+        const res = await this.taskRepository.findById(id);
+        return res;
+    }
+    async findByCategory(categoryId) {
+        const res = await this.taskRepository.findByCategory(categoryId);
+        return res;
+    }
+    async findByDueDate(dateDto) {
+        const res = await this.taskRepository.findByDueDate(dateDto);
+        return res;
+    }
     async create(createTaskDto) {
         const res = await this.taskRepository.create(createTaskDto);
         return res;
+    }
+    async update(taskDto) {
+        const res = await this.taskRepository.update(taskDto);
+        return res;
+    }
+    async delete(id) {
+        await this.taskRepository.delete(id);
+    }
+    async initTaskTable() {
+        await this.taskRepository.initTaskTable();
     }
 };
 TaskService = __decorate([

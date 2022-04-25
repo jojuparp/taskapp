@@ -20,6 +20,26 @@ let CategoryService = class CategoryService {
         const res = await this.categoryRepository.findAll();
         return res;
     }
+    async findOne(id) {
+        const res = await this.categoryRepository.findOne(id);
+        return res;
+    }
+    async create(createCategoryDto) {
+        const res = await this.categoryRepository.create(createCategoryDto);
+        return res;
+    }
+    async update(categoryDtdo) {
+        const res = await this.categoryRepository.update(categoryDtdo);
+        return res;
+    }
+    async delete(id) {
+        const res = await this.categoryRepository.delete(id);
+        return res;
+    }
+    async initCategoryTable() {
+        const res = await this.categoryRepository.initCategoryTable();
+        return res;
+    }
 };
 CategoryService = __decorate([
     (0, common_1.Injectable)(),

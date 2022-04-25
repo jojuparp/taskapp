@@ -9,31 +9,40 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Task = void 0;
+exports.GetTaskByDueDateDto = exports.CreateTaskDto = exports.TaskDto = void 0;
+const mapped_types_1 = require("@nestjs/mapped-types");
+const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
-class Task {
-    constructor(id, description, date, categoryId) {
+class TaskDto {
+    constructor(id, description, dueDate, categoryId) {
         this.id = id;
         this.description = description;
-        this.date = date;
+        this.dueDate = dueDate;
         this.categoryId = categoryId;
     }
 }
 __decorate([
     (0, class_validator_1.IsInt)(),
     __metadata("design:type", Number)
-], Task.prototype, "id", void 0);
+], TaskDto.prototype, "id", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], Task.prototype, "description", void 0);
+], TaskDto.prototype, "description", void 0);
 __decorate([
+    (0, class_transformer_1.Type)(() => Date),
     (0, class_validator_1.IsDate)(),
     __metadata("design:type", Date)
-], Task.prototype, "date", void 0);
+], TaskDto.prototype, "dueDate", void 0);
 __decorate([
     (0, class_validator_1.IsInt)(),
     __metadata("design:type", Number)
-], Task.prototype, "categoryId", void 0);
-exports.Task = Task;
+], TaskDto.prototype, "categoryId", void 0);
+exports.TaskDto = TaskDto;
+class CreateTaskDto extends (0, mapped_types_1.OmitType)(TaskDto, ['id']) {
+}
+exports.CreateTaskDto = CreateTaskDto;
+class GetTaskByDueDateDto extends (0, mapped_types_1.PickType)(TaskDto, ['dueDate']) {
+}
+exports.GetTaskByDueDateDto = GetTaskByDueDateDto;
 //# sourceMappingURL=task.js.map

@@ -29,6 +29,9 @@ select * from task where trunc(duedate) = date '2022-05-11';
 select * from task where trunc(duedate) = to_date ('11-04-2022', 'dd-mm-yyyy');
 
 
+select * from task where trunc(duedate) = date '2022-04-21T11:04:28.580Z';
+
+
 /*OTHER*/
 
 insert into timest values(to_timestamp('02-01-1994 14:33:00', 'DD-MM-YYYY HH24:MI:SS'));

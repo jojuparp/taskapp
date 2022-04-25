@@ -1,35 +1,52 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Header,
   Param,
-  Post,
-  ValidationPipe,
+  ParseIntPipe,
+  Patch,
+  Post
 } from '@nestjs/common';
-import { Category } from './model/category';
+import { CategoryDto } from './dto/category.dto';
 import { CategoryService } from './category.service';
+import { CreateCategoryDto } from './dto/create-category.dto';
 
 @Controller('categories')
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
-  /*   @Post()
-  @Header('Content-Type', 'application/json')
-  async create(@Body(new ValidationPipe()) task: Task) {
-    console.log(task);
-    return 'This action adds a new task';
-  } */
-
   @Get()
-  async findAll(): Promise<Category[]> {
-    const tasks = await this.categoryService.findAll();
-    return tasks;
+  async findAll(): Promise<CategoryDto[]> {
+    const res = await this.categoryService.findAll();
+    return res;
   }
 
-  @Get(':id/get')
-  findOne(@Param('id') id: string): string {
-    console.log(id);
-    return `This action returns a #${id} task`;
+  @Get('category/:id')
+  async findOne(@Param('id', new ParseIntPipe()) id: number): Promise<CategoryDto[]> {
+    const res = await this.categoryService.findOne(id);
+    return res;
+  }
+
+  @Post('create')
+  @Header('Content-Type', 'application/json')
+  async create(@Body() createCategoryDto: CreateCategoryDto): Promise<CategoryDto> {
+    const res = this.categoryService.create(createCategoryDto);
+    return res;
+  }
+
+
+  @Patch('update')
+  @Header('Content-Type', 'application/json')
+  async update(@Body() categoryDto: CategoryDto): Promise<CategoryDto> {
+    const res = await this.categoryService.update(categoryDto);
+    return res;
+  }
+
+  @Delete('delete/:id') 
+  async delete(@Param('id', new ParseIntPipe()) id: number): Promise<void> {
+    const res = await this.categoryService.delete(id);
+    return res;
   }
 }

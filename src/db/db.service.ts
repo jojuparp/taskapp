@@ -4,6 +4,16 @@ import { dbconfig } from './db.config';
 
 @Injectable()
 export class DatabaseService {
+  async initClient(): Promise<void> {
+    const libDirPath = process.env.LIB_DIR_PATH || '/Users/joni1/devel/instantclient'
+    console.log(`initalizing Instantclient with path ${libDirPath}`)
+    try {
+      return OracleDB.initOracleClient({libDir: libDirPath})
+    } catch (err) {
+      console.error("error initializing client: ", err);
+    }
+  }
+
   async createPool(): Promise<OracleDB.Pool> {
     console.log('creating database connection pool...');
     try {
@@ -11,15 +21,15 @@ export class DatabaseService {
       console.log('new database pool created');
       return pool;
     } catch (error) {
-      console.log('error creating connection pool ', error);
+      console.log('error creating connection pool: ', error);
     }
   }
 
   async closePool() {
-    console.log('terminating database connection pool');
+    console.log('terminating database connection pool...');
     try {
       console.log('database pool closed');
-      OracleDB.getPool().close(10);
+      return OracleDB.getPool().close(10);
     } catch (error) {
       console.log(error);
     }
@@ -37,8 +47,8 @@ export class DatabaseService {
   async executeQuery<T>(
     connection: OracleDB.Connection,
     sql: string,
-    bindParams: OracleDB.BindParameters,
-    options: OracleDB.ExecuteOptions,
+    bindParams: OracleDB.BindParameters = {},
+    options: OracleDB.ExecuteOptions = { autoCommit: true, outFormat: OracleDB.OUT_FORMAT_OBJECT },
   ): Promise<OracleDB.Result<T>> {
     try {
       const result: OracleDB.Result<T> = await connection.execute(
