@@ -1,37 +1,41 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import OracleDB = require('oracledb');
-import { dbconfig } from './db.config';
+import { EnvService } from 'src/env/env.service';
 
 @Injectable()
 export class DatabaseService {
+  constructor(private envService: EnvService) {}
+  private readonly logger: Logger = new Logger();
+  private readonly loggerContext = 'DatabaseService';
+  
   async initClient(): Promise<void> {
-    const libDirPath = process.env.LIB_DIR_PATH || '/Users/joni1/devel/instantclient'
-    console.log(`initalizing Instantclient with path ${libDirPath}`)
+    const libDirPath = this.envService.oracleLibDirPath;
+    this.logger.log(`Initalizing Instantclient`, this.loggerContext);
     try {
-      return OracleDB.initOracleClient({libDir: libDirPath})
+      return OracleDB.initOracleClient({libDir: libDirPath});
     } catch (err) {
-      console.error("error initializing client: ", err);
+      this.logger.error("Error initializing Instantclient: ", err, this.loggerContext);
     }
   }
 
   async createPool(): Promise<OracleDB.Pool> {
-    console.log('creating database connection pool...');
+    this.logger.log('Creating a database connection pool', this.loggerContext);
     try {
-      const pool = await OracleDB.createPool(dbconfig);
-      console.log('new database pool created');
+      const pool = await OracleDB.createPool(this.envService.dbConfig);
+      this.logger.log('New database connection pool created', this.loggerContext);
       return pool;
-    } catch (error) {
-      console.log('error creating connection pool: ', error);
+    } catch (err) {
+      this.logger.error('Error creating connection pool: ', err, this.loggerContext);
     }
   }
 
   async closePool() {
-    console.log('terminating database connection pool...');
+    this.logger.log('Closing database connection pool', this.loggerContext);
     try {
-      console.log('database pool closed');
-      return OracleDB.getPool().close(10);
-    } catch (error) {
-      console.log(error);
+      this.logger.log('Database connection pool closed', this.loggerContext);
+      return await OracleDB.getPool().close(10);
+    } catch (err) {
+      this.logger.error('Error closing database connection pool: ', err, this.loggerContext);
     }
   }
 
@@ -39,9 +43,15 @@ export class DatabaseService {
     try {
       const connection = await OracleDB.getConnection();
       return connection;
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      this.logger.error('Error getting a new database connection: ', err, this.loggerContext);
     }
+  }
+
+  async testConnection(): Promise<void> {
+    this.logger.log('Testing database connection', this.loggerContext);
+    await this.getConnection();
+    this.logger.log('Succesfully connected to database', this.loggerContext);
   }
 
   async executeQuery<T>(
@@ -59,7 +69,7 @@ export class DatabaseService {
 
       return result;
     } catch (err) {
-      console.error(err);
+      this.logger.error('Error executing query: ', err, this.loggerContext);
     } finally {
       connection.close();
     }

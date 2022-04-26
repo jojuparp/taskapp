@@ -5,24 +5,31 @@ import { CategoryModule } from '../category/category.module';
 import { DatabaseModule } from '../db/db.module';
 import { DatabaseService } from '../db/db.service';
 import { TaskModule } from '../task/task.module';
-import { TaskService } from 'src/task/task.service';
-import { CategoryService } from 'src/category/category.service';
+import { ConfigModule } from '@nestjs/config';
+import { validateEnv } from 'src/env/env.validation';
+import { EnvModule } from 'src/env/env.module';
 
 @Module({
-  imports: [DatabaseModule, TaskModule, CategoryModule],
+  imports: [
+    DatabaseModule,
+    EnvModule,
+    TaskModule,
+    CategoryModule,
+    ConfigModule.forRoot({
+      cache: true,
+      validate: validateEnv
+    })
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule implements OnModuleInit, OnModuleDestroy {
   @Inject() private databaseService: DatabaseService;
-  @Inject() private categoryService: CategoryService;
-  @Inject() private taskService: TaskService;
   
   async onModuleInit(): Promise<void> {
     await this.databaseService.initClient();
     await this.databaseService.createPool();
-    await this.categoryService.initCategoryTable();
-    await this.taskService.initTaskTable();
+    await this.databaseService.testConnection();
   }
 
   async onModuleDestroy(): Promise<void> {

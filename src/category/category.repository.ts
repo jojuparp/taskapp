@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import OracleDB = require('oracledb');
 import { DatabaseService } from 'src/db/db.service';
 import { CategoryDto } from './dto/category.dto';
@@ -17,9 +17,10 @@ interface CreateOrUpdateCategoryRow {
 @Injectable()
 export class CategoryRepository {
   constructor(private databaseService: DatabaseService) {}
-  
+  private logger: Logger = new Logger();
+  private loggerContext = 'CategoryRepository';
+
   async findAll(): Promise<CategoryDto[]> {
-    console.log('polling for all Categories');
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
@@ -35,7 +36,6 @@ export class CategoryRepository {
   }
 
   async findOne(id: number): Promise<CategoryDto[]> {
-    console.log(`polling for category of id ${id}`);
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
@@ -53,7 +53,6 @@ export class CategoryRepository {
   }
 
   async create(createCategoryDto: CreateCategoryDto): Promise<CategoryDto> {
-    console.log('creating category...')
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
@@ -73,7 +72,6 @@ export class CategoryRepository {
   }
 
   async update(categoryDto: CategoryDto): Promise<CategoryDto> {
-    console.log(`updating Category of id ${categoryDto.id}`);
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
@@ -93,7 +91,6 @@ export class CategoryRepository {
   }
 
   async delete(id: number): Promise<void> {
-    console.log(`deleting category of id ${id}...`);
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
@@ -108,7 +105,7 @@ export class CategoryRepository {
   }
 
   async initCategoryTable(): Promise<void> {
-    console.log('checking for existing category table...')
+    this.logger.log('Checking for existing category table', this.loggerContext)
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
@@ -119,7 +116,7 @@ export class CategoryRepository {
       )
 
       if (result.rows.length == 0) {
-        console.log('no existing table for categories. Creating one...')
+        this.logger.log('No existing table for categories. Creating one', this.loggerContext)
         const createConnection = await this.databaseService.getConnection();
         const createSql = `create table category(
           id number(3) generated always as identity cache 30,
@@ -131,10 +128,10 @@ export class CategoryRepository {
           createConnection,
           createSql
         );
-        console.log('category table initialized');
+        this.logger.log('Category table initialized', this.loggerContext);
       }
       else {
-        console.log('category table already initialized')
+        this.logger.log('Category table already initialized', this.loggerContext);
       }
   }
 }

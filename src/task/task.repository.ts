@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import OracleDB = require('oracledb');
 import { DateDto } from 'src/app/dto/date.dto';
 import { DatabaseService } from 'src/db/db.service';
@@ -21,10 +21,11 @@ interface CreateOrUpdateTaskRow {
 
 @Injectable()
 export class TaskRepository {
-  constructor(private databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseService) {}
+  private readonly logger: Logger = new Logger();
+  private readonly loggerContext = 'TaskRepository';
 
   async findAll(): Promise<TaskDto[]> {
-    console.log('polling for all Tasks...');
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
@@ -43,7 +44,6 @@ export class TaskRepository {
   }
 
   async findById(id: number): Promise<TaskDto[]> {
-    console.log(`getting task of id ${id}...`)
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
@@ -64,7 +64,6 @@ export class TaskRepository {
   }
 
   async findByCategory(categoryId: number): Promise<TaskDto[]> {
-    console.log(`fetching tasks of categoryid ${categoryId}...`)
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
@@ -85,9 +84,6 @@ export class TaskRepository {
   }
 
   async findByDueDate(dateDto: DateDto): Promise<TaskDto[]> {
-    const logFormat =
-      `${dateDto.date.getDate()}/${dateDto.date.getMonth()+1}/${dateDto.date.getFullYear()}`
-    console.log(`fetching tasks due on ${logFormat}...`)
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
@@ -108,14 +104,13 @@ export class TaskRepository {
   }
 
   async create(createTaskDto: CreateTaskDto): Promise<TaskDto> {
-    console.log('creating task...')
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
     const sql = `
-    insert into task (description, dueDate, categoryId)
-    values (:description, :dueDate, :categoryId)
-    return id, description, duedate, categoryid into :id, :description, :dueDate, :categoryId`;
+      insert into task (description, dueDate, categoryId)
+      values (:description, :dueDate, :categoryId)
+      return id, description, duedate, categoryid into :id, :description, :dueDate, :categoryId`;
     const options = { autoCommit: true, outFormat: OracleDB.OUT_FORMAT_OBJECT };
     const bindParams = {
       description: { val: createTaskDto.description, dir: OracleDB.BIND_INOUT },
@@ -142,15 +137,14 @@ export class TaskRepository {
   }
 
   async update(taskDto: TaskDto): Promise<TaskDto> {
-    console.log(`updating task of id ${taskDto.id}...`)
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
     const sql = `
-    update task set
-    description = :description, duedate = :dueDate, categoryid = :categoryId
-    where id = :id
-    return id, description, duedate, categoryid into :id, :description, :dueDate, :categoryId`;
+      update task set
+      description = :description, duedate = :dueDate, categoryid = :categoryId
+      where id = :id
+      return id, description, duedate, categoryid into :id, :description, :dueDate, :categoryId`;
     const bindParams = {
       description: { val: taskDto.description, dir: OracleDB.BIND_INOUT },
       dueDate: { val: taskDto.dueDate, dir: OracleDB.BIND_INOUT },
@@ -175,7 +169,6 @@ export class TaskRepository {
   }
 
   async delete(id: number): Promise<void> {
-    console.log(`deleting task of id ${id}...`);
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
@@ -190,7 +183,7 @@ export class TaskRepository {
   }
 
   async initTaskTable(): Promise<void> {
-    console.log('checking for existing task table...')
+    this.logger.log('Checking for existing Task table', this.loggerContext)
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
@@ -201,7 +194,7 @@ export class TaskRepository {
       )
 
       if (result.rows.length == 0) {
-        console.log('no existing table for tasks. Creating one...')
+        this.logger.log('no existing table for tasks. Creating one', this.loggerContext)
         const createConnection = await this.databaseService.getConnection();
         const createSql = `create table task(
           id number(3) generated always as identity cache 30,
@@ -218,10 +211,10 @@ export class TaskRepository {
           createConnection,
           createSql
         );
-        console.log('task table initialized');
+        this.logger.log('task table initialized', this.loggerContext);
       }
       else {
-        console.log('task table already initialized')
+        this.logger.log('task table already initialized')
       }
   }
 }
