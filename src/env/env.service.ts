@@ -1,13 +1,13 @@
-import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import OracleDB from "oracledb";
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import OracleDB from 'oracledb';
 
 @Injectable()
 export class EnvService {
   constructor(private configService: ConfigService) {}
 
   get oracleLibDirPath(): string {
-    return this.configService.get<string>('NODE_ORACLEDB_LIBDIR_PATH')
+    return this.configService.get<string>('NODE_ORACLEDB_LIBDIR_PATH');
   }
 
   get oracleUser(): string {
@@ -27,6 +27,6 @@ export class EnvService {
       user: this.configService.get<string>('NODE_ORACLEDB_USER'),
       password: this.configService.get<string>('NODE_ORACLEDB_PASSWORD'),
       connectionString: this.configService.get<string>('NODE_ORACLEDB_CONNECTION_STRING')
-    }
+    };
   }
 }

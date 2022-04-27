@@ -1,5 +1,5 @@
-import { Type } from "class-transformer";
-import { IsDate } from "class-validator";
+import { Type } from 'class-transformer';
+import { IsDate } from 'class-validator';
 
 /* For general Date validation in request body */
 export class DateDto {

@@ -29,7 +29,7 @@ export class TaskRepository {
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
-    const sql = `select * from task`;
+    const sql = 'select * from task';
 
     const result = await this.databaseService.executeQuery<GetTaskRow>(
       connection,
@@ -47,14 +47,14 @@ export class TaskRepository {
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
-    const sql = `select * from task where id = :id`
-    const bindParams = { id: id }
+    const sql = 'select * from task where id = :id';
+    const bindParams = { id: id };
 
     const result = await this.databaseService.executeQuery<GetTaskRow>(
       connection,
       sql,
       bindParams
-    )
+    );
 
     const tasks = result.rows.map(
       (r) =>
@@ -67,8 +67,8 @@ export class TaskRepository {
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
-    const sql = `select * from task where categoryid = :categoryId`
-    const bindParams = { categoryId: categoryId }
+    const sql = 'select * from task where categoryid = :categoryId';
+    const bindParams = { categoryId: categoryId };
 
     const result = await this.databaseService.executeQuery<GetTaskRow>(
       connection,
@@ -87,7 +87,7 @@ export class TaskRepository {
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
-    const sql =`select * from task where trunc(duedate) = trunc(:dueDate)`;
+    const sql ='select * from task where trunc(duedate) = trunc(:dueDate)';
     const bindParams = { dueDate: dateDto.date };
 
     const result = await this.databaseService.executeQuery<GetTaskRow>(
@@ -117,7 +117,7 @@ export class TaskRepository {
       dueDate: { val: createTaskDto.dueDate, dir: OracleDB.BIND_INOUT },
       categoryId: { val: createTaskDto.categoryId, dir: OracleDB.BIND_INOUT },
       id: { dir: OracleDB.BIND_OUT }
-    }
+    };
 
     const result = await this.databaseService.executeQuery<CreateOrUpdateTaskRow>(
       connection,
@@ -150,7 +150,7 @@ export class TaskRepository {
       dueDate: { val: taskDto.dueDate, dir: OracleDB.BIND_INOUT },
       categoryId: { val: taskDto.categoryId, dir: OracleDB.BIND_INOUT },
       id: { val: taskDto.id, dir: OracleDB.BIND_INOUT }
-    }
+    };
 
     const result = await this.databaseService.executeQuery<CreateOrUpdateTaskRow>(
       connection,
@@ -163,7 +163,7 @@ export class TaskRepository {
       result.outBinds.description[0],
       result.outBinds.dueDate[0], 
       result.outBinds.categoryId[0]
-    )
+    );
 
     return updatedTask;
   }
@@ -172,7 +172,7 @@ export class TaskRepository {
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
-    const sql = `delete from task where id = :id`;
+    const sql = 'delete from task where id = :id';
     const bindParams = { id: id };
 
     await this.databaseService.executeQuery<void>(
@@ -183,38 +183,39 @@ export class TaskRepository {
   }
 
   async initTaskTable(): Promise<void> {
-    this.logger.log('Checking for existing Task table', this.loggerContext)
     const connection: OracleDB.Connection =
       await this.databaseService.getConnection();
 
-      const sql = `select table_name from all_tables where table_name = 'TASK'`;
-      const result = await this.databaseService.executeQuery<void>(
-        connection,
-        sql
-      )
+    const sql = `DECLARE
+    tbl_count number;
+    sql_stmt long;
+    
+    BEGIN
+        SELECT COUNT(*) INTO tbl_count 
+        FROM all_tables
+        WHERE table_name = 'TASK';
 
-      if (result.rows.length == 0) {
-        this.logger.log('no existing table for tasks. Creating one', this.loggerContext)
-        const createConnection = await this.databaseService.getConnection();
-        const createSql = `create table task(
-          id number(3) generated always as identity cache 30,
-          description varchar(40) not null,
-          dueDate date,
-          categoryId number(3) not null,
-          constraint category_fk
-            foreign key (categoryId)
-            references category(id)
-            on delete cascade,
-          primary key (id))`
+        IF(tbl_count <= 0)
+            THEN
+            sql_stmt:='
+            create table task(
+              id number(3) generated always as identity cache 30,
+              description varchar(40) not null,
+              dueDate date,
+              categoryId number(3) not null,
+              constraint category_fk
+                foreign key (categoryId)
+                references category(id)
+                on delete cascade,
+              primary key (id))';
+            EXECUTE IMMEDIATE sql_stmt;
+        END IF;
+    END;`;
 
-        await this.databaseService.executeQuery<void>(
-          createConnection,
-          createSql
-        );
-        this.logger.log('task table initialized', this.loggerContext);
-      }
-      else {
-        this.logger.log('task table already initialized')
-      }
+    await this.databaseService.executeQuery<void>(
+      connection,
+      sql
+    );
+    this.logger.log('Task table initialized', this.loggerContext);
   }
 }

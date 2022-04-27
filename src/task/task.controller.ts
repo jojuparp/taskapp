@@ -26,7 +26,7 @@ export class TaskController {
 
   @Get('task/:taskId')
   async findById(@Param('taskId', new ParseIntPipe()) taskId: number): Promise<TaskDto[]> {
-    const res = await this.taskService.findById(taskId)
+    const res = await this.taskService.findById(taskId);
     return res;
   }
 

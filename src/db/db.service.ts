@@ -10,11 +10,11 @@ export class DatabaseService {
   
   async initClient(): Promise<void> {
     const libDirPath = this.envService.oracleLibDirPath;
-    this.logger.log(`Initalizing Instantclient`, this.loggerContext);
+    this.logger.log('Initalizing Instantclient', this.loggerContext);
     try {
       return OracleDB.initOracleClient({libDir: libDirPath});
     } catch (err) {
-      this.logger.error("Error initializing Instantclient: ", err, this.loggerContext);
+      this.logger.error('Error initializing Instantclient: ', err, this.loggerContext);
     }
   }
 

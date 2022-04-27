@@ -33,7 +33,7 @@ export class CategoryService {
   }
 
   async initCategoryTable(): Promise<void> {
-    const res = await this.categoryRepository.initCategoryTable()
+    const res = await this.categoryRepository.initCategoryTable();
     return res;
   }
 }

@@ -14,7 +14,7 @@ export class TaskService {
   }
 
   async findById(id: number): Promise<TaskDto[]> {
-    const res = await this.taskRepository.findById(id)
+    const res = await this.taskRepository.findById(id);
     return res;
   }
 
