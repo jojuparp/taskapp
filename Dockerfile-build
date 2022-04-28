@@ -1,12 +1,22 @@
-FROM        node:16.14.2-buster-slim
-# Oracle needs libaio1
-# wget for build and healtcheck
-# unzip for fetching Oracle Instant Client
-# procps for NestJS CLI, `nest start` needs `ps`
+FROM node:14.19.1-buster-slim as builder
+
+WORKDIR /usr/src/app
+
+COPY package*.json .
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build
+
+
+FROM        node:14.19.1-buster-slim as production-build
+
 RUN         apt-get update -qq \
                 && apt-get install -y -qq libaio1 wget unzip procps
-ENV         LD_LIBRARY_PATH="/opt/oracle/instantclient"
-WORKDIR     /opt/oracle
+ENV         LD_LIBRARY_PATH="/usr/src/app/instantclient"
+WORKDIR     /usr/src/app
 RUN         wget -q \
                 -O instantclient-basiclite-linux.zip \
                 https://download.oracle.com/otn_software/linux/instantclient/215000/instantclient-basiclite-linux.x64-21.5.0.0.0dbru.zip \
@@ -14,4 +24,17 @@ RUN         wget -q \
                 && unzip -q instantclient-basiclite-linux.zip \
                 && rm instantclient-basiclite-linux.zip \
                 && mv instantclient_* instantclient 
-RUN         apt-get remove -y -qq unzip
+
+COPY package*.json .
+
+RUN npm install --only=production
+
+COPY . .
+
+COPY --from=builder /usr/src/app/dist ./dist
+
+#RUN npm run build
+
+RUN         apt-get remove -y -qq unzip && rm -rf src
+
+CMD         [ "node", "dist/main" ]

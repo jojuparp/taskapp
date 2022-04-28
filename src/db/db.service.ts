@@ -7,16 +7,6 @@ export class DatabaseService {
   constructor(private envService: EnvService) {}
   private readonly logger: Logger = new Logger();
   private readonly loggerContext = 'DatabaseService';
-  
-  async initClient(): Promise<void> {
-    const libDirPath = this.envService.oracleLibDirPath;
-    this.logger.log('Initalizing Instantclient', this.loggerContext);
-    try {
-      return OracleDB.initOracleClient({libDir: libDirPath});
-    } catch (err) {
-      this.logger.error('Error initializing Instantclient: ', err, this.loggerContext);
-    }
-  }
 
   async createPool(): Promise<OracleDB.Pool> {
     this.logger.log('Creating a database connection pool', this.loggerContext);
@@ -29,7 +19,7 @@ export class DatabaseService {
     }
   }
 
-  async closePool() {
+  async closePool(): Promise<void> {
     this.logger.log('Closing database connection pool', this.loggerContext);
     try {
       this.logger.log('Database connection pool closed', this.loggerContext);
@@ -40,18 +30,14 @@ export class DatabaseService {
   }
 
   async getConnection(): Promise<OracleDB.Connection> {
+    this.logger.log('Getting a database connection from the default connection pool', this.loggerContext);
     try {
       const connection = await OracleDB.getConnection();
+      this.logger.log('New database connection created', this.loggerContext);
       return connection;
     } catch (err) {
       this.logger.error('Error getting a new database connection: ', err, this.loggerContext);
     }
-  }
-
-  async testConnection(): Promise<void> {
-    this.logger.log('Testing database connection', this.loggerContext);
-    await this.getConnection();
-    this.logger.log('Succesfully connected to database', this.loggerContext);
   }
 
   async executeQuery<T>(

@@ -17,7 +17,8 @@ import { EnvModule } from 'src/env/env.module';
     CategoryModule,
     ConfigModule.forRoot({
       cache: true,
-      validate: validateEnv
+      validate: validateEnv,
+      ignoreEnvFile: true
     })
   ],
   controllers: [AppController],
@@ -27,9 +28,8 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
   @Inject() private databaseService: DatabaseService;
   
   async onModuleInit(): Promise<void> {
-    await this.databaseService.initClient();
     await this.databaseService.createPool();
-    await this.databaseService.testConnection();
+    await this.databaseService.getConnection();
   }
 
   async onModuleDestroy(): Promise<void> {

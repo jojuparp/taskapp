@@ -1,5 +1,5 @@
 import { plainToClass } from 'class-transformer';
-import { IsEnum, IsInt, IsNotEmpty, IsString, validateSync } from 'class-validator';
+import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, validateSync } from 'class-validator';
 
 enum Environment {
   Development = 'development',
@@ -10,24 +10,21 @@ class EnvironmentVariables {
   @IsEnum(Environment)
     NODE_ENV: Environment;
 
+  @IsOptional()
   @IsInt()
-    PORT?: number;
+    PORT: number;
 
   @IsString()
   @IsNotEmpty() 
-    NODE_ORACLEDB_USER: string;
+    ORACLEDB_USER: string;
 
   @IsString()
   @IsNotEmpty()
-    NODE_ORACLEDB_PASSWORD: string;
+    ORACLEDB_PASSWORD: string;
 
   @IsString()
   @IsNotEmpty()
-    NODE_ORACLEDB_LIBDIR_PATH: string;
-
-  @IsString()
-  @IsNotEmpty()
-    NODE_ORACLEDB_CONNECTION_STRING: string;
+    ORACLEDB_CONNECTION_STRING: string;
 }
 
 export function validateEnv(config: Record<string, unknown>): EnvironmentVariables {
