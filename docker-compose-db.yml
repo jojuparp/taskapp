@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+
+  oracledb:
+    container_name: myxedb
+    image: oracle/database:21.3.0-xe
+    env_file:
+      - .env.database
+    ports:
+      - 1521:1521
+      - 5500:5500
+    volumes:
+      - oradata:/opt/oracle/oradata

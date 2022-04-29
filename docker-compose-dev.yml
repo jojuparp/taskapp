@@ -2,18 +2,10 @@ version: '3.8'
 
 services:
 
-  database:
-    container_name: myxedb
-    image: oracle/database:21.3.0-xe
-    env_file:
-      - .env.database
-    volumes:
-      - oradata:/opt/oracle/oradata
-  
   development-env:
     container_name: taskapp-dev
     extra_hosts:
-      - "host.docker.internal:192.168.5.2"
+      - "host.docker.internal:${HOST_DOCKER_IP}"
     image: taskapp-dev:1.0
     build:
       context: .

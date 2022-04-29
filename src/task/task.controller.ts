@@ -43,7 +43,7 @@ export class TaskController {
     return res;
   }
 
-  @Post()
+  @Post('create')
   @Header('Content-Type', 'application/json')
   async create(@Body() createTaskDto: CreateTaskDto): Promise<TaskDto> {
     const res = await this.taskService.create(createTaskDto);

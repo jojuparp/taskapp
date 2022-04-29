@@ -10,6 +10,8 @@ COPY      . .
 
 RUN       npm run build
 
+RUN       rm -rf src
+
 
 FROM      node:14.19.1-buster-slim as production-build
 
