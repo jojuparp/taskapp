@@ -90,7 +90,7 @@ Provide
   * The `ORACLEDB_CONNECTION_STRING` variable in `.env.development` will use the IP address of `docker.host.internal`, so the same address that was used during the `compose` process. The database name will always be `XEPDB1` with these configurations.
   
 ```
-$ $ export HOST_DOCKER_IP=<IP_OF_YOUR_DOCKER_HOST>
+$ export HOST_DOCKER_IP=<IP_OF_YOUR_DOCKER_HOST>
 $ docker compose -f docker-compose-build.yml up
 ```
 
