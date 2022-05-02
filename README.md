@@ -34,7 +34,7 @@ $ ./buildContainerImage.sh -v 21.3.0 -x
 When the image building process is completed, you may spin up a container with the `compose` file provided in the repo. You'll need to provide an `.env.database` file with the appropriate values. An example is provided in the [repo](./.database.env.example). The variable `ORACLE_PWD` will set the administrator password for the containerized database.
 ```
 # Using compose V2
-docker compose -f docker-compose-db.yml up
+$ docker compose -f docker-compose-db.yml up
 ```
 
 **NOTE: if you are using Lima, building the OracleDB image and starting up the container is a lenghty process. Expect the whole process to take about 4-6 hours depending on your Lima VM resources. On bare metal x86 architecture the process should take much less time.**

@@ -1,5 +1,4 @@
 FROM      node:14.19.1-buster-slim as builder
-
 WORKDIR   /usr/src/app
 
 COPY      package*.json .
@@ -8,17 +7,18 @@ RUN       npm install
 
 COPY      . .
 
-RUN       npm run build
-
-RUN       rm -rf src
+RUN       npm run build && rm -rf src
 
 
 FROM      node:14.19.1-buster-slim as production-build
+WORKDIR   /usr/src/app
 
 RUN       apt-get update -qq \
             && apt-get install -y -qq libaio1 wget unzip procps
+
 ENV       LD_LIBRARY_PATH="/usr/src/app/instantclient"
-WORKDIR   /usr/src/app
+ENV       NODE_ENV=production
+
 RUN       wget -q \
             -O instantclient-basiclite-linux.zip \
             https://download.oracle.com/otn_software/linux/instantclient/215000/instantclient-basiclite-linux.x64-21.5.0.0.0dbru.zip \
@@ -32,7 +32,6 @@ COPY      package*.json .
 RUN       npm install --only=production
 
 COPY      . .
-
 COPY      --from=builder /usr/src/app/dist ./dist
 
 RUN       apt-get remove -y -qq unzip && rm -rf src
