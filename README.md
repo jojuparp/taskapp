@@ -4,7 +4,9 @@ Taskapp provides a simple REST API for creating, reading, updating and deleting 
 
 A Task has a specified due date, a category and a description attached to it. A Category has a name.
 
+### Contents
 - [Taskapp](#taskapp)
+    - [Contents](#contents)
   - [0 Database setup](#0-database-setup)
     - [0-1 Setting up Lima (macOS)](#0-1-setting-up-lima-macos)
     - [0-2 Oracle Database image and container setup](#0-2-oracle-database-image-and-container-setup)
