@@ -27,7 +27,7 @@ Containerized OracleDB instantces only support x86 architectures as a base platf
 On Windows, WSL2 should be used as a base instead and treated as a typical x86 Linux environment (continue from [step 0-2](#0-2-oracle-database-image-and-container-setup))
 
 ### 0-1 Setting up Lima (macOS)
-Using Homebrew. A sample `lima.yaml` config file is provided in the [repo](./lima.yaml). See the Lima repo for [additional reference](https://github.com/lima-vm/lima/blob/a4920c1907fa3028689962a8abe29d2ea0f24e9a/pkg/limayaml/default.yaml)
+Using Homebrew. A sample `lima.yaml` config file is provided in the [repo](/server/lima.yaml). See the Lima repo for [additional reference](https://github.com/lima-vm/lima/blob/a4920c1907fa3028689962a8abe29d2ea0f24e9a/pkg/limayaml/default.yaml)
 
 ```
 # NOTE: make sure that no instance of Docker Desktop is running.
@@ -47,7 +47,7 @@ Eg. using OracleDB version `21.3.0-xe`:
 ```
 $ ./buildContainerImage.sh -v 21.3.0 -x
 ```
-When the image building process is completed, `compose` can be used to spin up a container with the file provided in the repo. An `.env.database` file with the appropriate values needs to be provided. An example is provided in the [repo](./.database.env.example). The variable `ORACLE_PWD` will set the administrator password for the containerized database.
+When the image building process is completed, `compose` can be used to spin up a container with the file provided in the repo. An `.env.database` file with the appropriate values needs to be provided. An example is provided in the [repo](/server/.database.env.example). The variable `ORACLE_PWD` will set the administrator password for the containerized database.
 ```
 # Using compose V2
 $ docker compose -f docker-compose-db.yml up
@@ -73,7 +73,7 @@ SQL> exit;
 
 The development build is run in debug mode in a container with Node installed. The source code is made visible to the container by a volume. The Node process inside the container is responsible for watching for changes. The following resourcez will need to be provided
 * An environment variable for `compose` detailing the internal IP address of `docker.host.internal`. On non-Lima Docker installations the IP will most likely be `172.17.0.1`. On lima the value can be found from the VM's `/etc/hosts` file.
-* `.env.development` file with appropriate variables. An example file can be found in the [repo](/app.env.example)
+* `.env.development` file with appropriate variables. An example file can be found in the [repo](/server/app.env.example)
   * The `ORACLEDB_CONNECTION_STRING` variable in `.env.development` will use the IP address of `docker.host.internal`, so the same address we used during the `compose` process. The database name will always be `XEPDB1` with these configurations.
 
 ```
@@ -86,7 +86,7 @@ $ docker compose -f docker-compose-dev.yml up development-env
 
 Provide
 * An environment variable for `compose` detailing the internal IP address of `docker.host.internal`. On non-Lima Docker installations the IP will most likely be `172.17.0.1`. On lima it is required need to check the value from `/etc/hosts` from inside the VM.
-* `.env.production` file with appropriate variables. An example file can be found in the [repo](/app.env.example)
+* `.env.production` file with appropriate variables. An example file can be found in the [repo](/server/app.env.example)
   * The `ORACLEDB_CONNECTION_STRING` variable in `.env.development` will use the IP address of `docker.host.internal`, so the same address that was used during the `compose` process. The database name will always be `XEPDB1` with these configurations.
   
 ```
@@ -96,7 +96,7 @@ $ docker compose -f docker-compose-build.yml up
 
 ## 2 Usage
 
-Once the project is set up, the following endpoints can be used with the appropriate HTTP requests, headers and bodies. Sample requests are provided in the [repo](request-examples/).
+Once the project is set up, the following endpoints can be used with the appropriate HTTP requests, headers and bodies. Sample requests are provided in the [repo](/server/request-examples/).
 
 #### Get items
 * [/categories](/categories) -- Get all Categories
